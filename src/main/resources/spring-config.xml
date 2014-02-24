@@ -6,7 +6,9 @@
     <context:annotation-config />
     <context:component-scan base-package="pl.df.owlToWiki"/>
 
-    <bean name="owlLoader" class="pl.df.owlToWiki.OwlLoaderImpl">
+    <context:property-placeholder location="classpath*:application.properties"/>
+
+    <bean name="owlLoader" class="pl.df.owlToWiki.owl.OwlLoaderImpl">
         <property name="inputFiles">
             <list>
                 <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DCHARS.owl</value>-->
@@ -18,5 +20,14 @@
                 <!--<value>/Users/dominikfilipiak/Downloads/DMOP/catalog-v001.xml</value>-->
             </list>
         </property>
+    </bean>
+
+    <bean name="wikiBot" class="net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot"/>
+
+    <bean name="wikiFacade" class="pl.df.owlToWiki.wiki.WikiFacadeImpl">
+        <property name="URL" value="${wiki.url}"/>
+        <property name="userName" value="${wiki.userName}"/>
+        <property name="password" value="${wiki.password}"/>
+        <property name="wikiBot" ref="wikiBot"/>
     </bean>
 </beans>

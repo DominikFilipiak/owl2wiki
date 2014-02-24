@@ -1,4 +1,4 @@
-package pl.df.owlToWiki;
+package pl.df.owlToWiki.owl;
 
 import java.util.List;
 

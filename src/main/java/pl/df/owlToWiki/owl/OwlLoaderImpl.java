@@ -1,4 +1,4 @@
-package pl.df.owlToWiki;
+package pl.df.owlToWiki.owl;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
