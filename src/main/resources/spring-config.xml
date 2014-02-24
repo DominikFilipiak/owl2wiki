@@ -5,4 +5,18 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
     <context:annotation-config />
     <context:component-scan base-package="pl.df.owlToWiki"/>
+
+    <bean name="owlLoader" class="pl.df.owlToWiki.OwlLoaderImpl">
+        <property name="inputFiles">
+            <list>
+                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DCHARS.owl</value>-->
+                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DMEX.owl</value>-->
+                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DMKB.owl</value>-->
+                <value>/Users/dominikfilipiak/Downloads/DMOP/DMOP.owl</value>
+                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/PD.owl</value>-->
+                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/RMOperators.owl</value>-->
+                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/catalog-v001.xml</value>-->
+            </list>
+        </property>
+    </bean>
 </beans>
