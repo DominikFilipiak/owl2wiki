@@ -1,6 +1,7 @@
 package pl.df.owlToWiki.wiki;
 
-import net.sourceforge.jwbf.core.bots.WikiBot;
+import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
+import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
  * User: dominikfilipiak
@@ -8,25 +9,26 @@ import net.sourceforge.jwbf.core.bots.WikiBot;
  * Time: 00:09
  */
 public class WikiFacadeImpl implements WikiFacade{
-    private String URL;
     private String userName;
     private String password;
-    private WikiBot wikiBot;
-
-
-    @Override
-    public void setWikiBot(WikiBot wikiBot) {
-        this.wikiBot = wikiBot;
-    }
+    private MediaWikiBot mediaWikiBot;
 
     @Override
     public void write() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        connect();
+        SimpleArticle article = new SimpleArticle("TEST TEST TEST");
+        article.addText("IL Y AURA UNE GRANDE WIKIPEDIA");
+        mediaWikiBot.writeContent(article);
+
+    }
+
+    private void connect() {
+        mediaWikiBot.login(userName, password);
     }
 
     @Override
-    public void setURL(String URL) {
-        this.URL = URL;
+    public void setMediaWikiBot(MediaWikiBot mediaWikiBot) {
+        this.mediaWikiBot = mediaWikiBot;
     }
 
     @Override

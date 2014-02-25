@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    <context:annotation-config />
+    <context:annotation-config/>
     <context:component-scan base-package="pl.df.owlToWiki"/>
 
     <context:property-placeholder location="classpath*:application.properties"/>
@@ -22,12 +22,22 @@
         </property>
     </bean>
 
-    <bean name="wikiBot" class="net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot"/>
+    <bean name="mediaWikiBot" class="net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot" autowire="byName">
+    </bean>
+
+    <bean name="bot" class="net.sourceforge.jwbf.core.bots.HttpBot" autowire="byName">
+        <property name="client" ref="httpActionClient"/>
+    </bean>
+
+    <bean name="httpActionClient" class="net.sourceforge.jwbf.core.actions.HttpActionClient">
+        <constructor-arg name="url">
+            <value type="java.net.URL">${wiki.url}</value>
+        </constructor-arg>
+    </bean>
 
     <bean name="wikiFacade" class="pl.df.owlToWiki.wiki.WikiFacadeImpl">
-        <property name="URL" value="${wiki.url}"/>
         <property name="userName" value="${wiki.userName}"/>
         <property name="password" value="${wiki.password}"/>
-        <property name="wikiBot" ref="wikiBot"/>
+        <property name="mediaWikiBot" ref="mediaWikiBot"/>
     </bean>
 </beans>

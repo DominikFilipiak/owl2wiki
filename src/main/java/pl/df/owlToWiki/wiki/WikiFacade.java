@@ -1,6 +1,6 @@
 package pl.df.owlToWiki.wiki;
 
-import net.sourceforge.jwbf.core.bots.WikiBot;
+import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 
 /**
  * User: dominikfilipiak
@@ -9,8 +9,7 @@ import net.sourceforge.jwbf.core.bots.WikiBot;
  */
 public interface WikiFacade {
     public void write();
-    public void setURL(String URL);
     public void setUserName(String userName);
     public void setPassword(String password);
-    public void setWikiBot(WikiBot wikiBot);
+    public void setMediaWikiBot(MediaWikiBot mediaWikiBot);
 }
