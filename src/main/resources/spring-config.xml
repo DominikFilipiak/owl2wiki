@@ -8,24 +8,29 @@
 
     <context:property-placeholder location="classpath*:application.properties"/>
 
-    <bean name="owlLoader" class="pl.df.owlToWiki.owl.OwlLoaderImpl">
-        <property name="inputFiles">
-            <list>
-                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DCHARS.owl</value>-->
-                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DMEX.owl</value>-->
-                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/DMKB.owl</value>-->
-                <value>/Users/dominikfilipiak/Downloads/DMOP/DMOP.owl</value>
-                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/PD.owl</value>-->
-                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/RMOperators.owl</value>-->
-                <!--<value>/Users/dominikfilipiak/Downloads/DMOP/catalog-v001.xml</value>-->
-            </list>
-        </property>
+    <!-- Main facade -->
+    <bean name="owlToWikiFacade" class="pl.df.owlToWiki.facade.OwlToWikiFacadeImpl">
+        <property name="owlLoader" ref="owlLoader"/>
+        <property name="wikiWriter" ref="wikiWriter"/>
     </bean>
 
-    <bean name="mediaWikiBot" class="net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot" autowire="byName">
+    <!-- Owl loader -->
+    <bean name="owlLoader" class="pl.df.owlToWiki.facade.owl.OwlLoaderImpl">
+        <property name="inputFiles" value="#{'${owl.files}'.split(',')}"/>
+        <property name="rootRDFType" value="${owl.rootRDFType}"/>
+        <property name="predicates" value="#{'${owl.predicates}'.split(',')}"/>
     </bean>
 
-    <bean name="bot" class="net.sourceforge.jwbf.core.bots.HttpBot" autowire="byName">
+    <!-- Wikipedia writer -->
+    <bean name="wikiWriter" class="pl.df.owlToWiki.facade.wiki.WikiWriterImpl">
+        <property name="userName" value="${wiki.userName}"/>
+        <property name="password" value="${wiki.password}"/>
+        <property name="mediaWikiBot" ref="mediaWikiBot"/>
+    </bean>
+
+    <bean name="mediaWikiBot" class="net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot"/>
+
+    <bean name="bot" class="net.sourceforge.jwbf.core.bots.HttpBot">
         <property name="client" ref="httpActionClient"/>
     </bean>
 
@@ -35,9 +40,4 @@
         </constructor-arg>
     </bean>
 
-    <bean name="wikiFacade" class="pl.df.owlToWiki.wiki.WikiFacadeImpl">
-        <property name="userName" value="${wiki.userName}"/>
-        <property name="password" value="${wiki.password}"/>
-        <property name="mediaWikiBot" ref="mediaWikiBot"/>
-    </bean>
 </beans>

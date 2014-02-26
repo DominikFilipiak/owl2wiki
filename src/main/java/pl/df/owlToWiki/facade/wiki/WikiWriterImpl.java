@@ -1,30 +1,38 @@
-package pl.df.owlToWiki.wiki;
+package pl.df.owlToWiki.facade.wiki;
 
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
+import org.apache.log4j.Logger;
+
+import java.util.List;
 
 /**
+ * Created with IntelliJ IDEA.
  * User: dominikfilipiak
  * Date: 25/02/2014
- * Time: 00:09
+ * Time: 14:04
  */
-public class WikiFacadeImpl implements WikiFacade{
+public class WikiWriterImpl implements WikiWriter {
+
     private String userName;
     private String password;
     private MediaWikiBot mediaWikiBot;
+    private static Logger LOGGER = Logger.getLogger(WikiWriterImpl.class);
 
     @Override
-    public void write() {
-        connect();
-        SimpleArticle article = new SimpleArticle("TEST TEST TEST");
-        article.addText("IL Y AURA UNE GRANDE WIKIPEDIA");
-        mediaWikiBot.writeContent(article);
-
+    public void writeAll(List<SimpleArticle> articlesToWrite) {
+        for (SimpleArticle article : articlesToWrite) {
+            LOGGER.info("Writing article " + article.getTitle() + " to wiki...");
+            mediaWikiBot.writeContent(article);
+        }
     }
 
-    private void connect() {
+    @Override
+    public void connect() {
+        LOGGER.info("Connecting to Wikipedia.");
         mediaWikiBot.login(userName, password);
     }
+
 
     @Override
     public void setMediaWikiBot(MediaWikiBot mediaWikiBot) {
@@ -40,4 +48,6 @@ public class WikiFacadeImpl implements WikiFacade{
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }
