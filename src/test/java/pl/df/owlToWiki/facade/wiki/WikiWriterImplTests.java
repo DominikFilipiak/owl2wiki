@@ -1,7 +1,7 @@
 package pl.df.owlToWiki.facade.wiki;
 
-import junit.framework.TestCase;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:spring-config.xml")
-public class WikiWriterImplTests extends TestCase {
+public class WikiWriterImplTests {
     @Autowired
     private WikiWriterImpl wikiWriter;
 
@@ -23,10 +23,12 @@ public class WikiWriterImplTests extends TestCase {
 
     }
 
+    @Test
     public void testWriteAll() throws Exception {
 
     }
 
+    @Test
     public void testConnect() throws Exception {
 
     }

@@ -4,6 +4,7 @@ import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import net.sourceforge.jwbf.mediawiki.bots.MediaWikiBot;
 import org.apache.log4j.Logger;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class WikiWriterImpl implements WikiWriter {
     private String userName;
     private String password;
     private MediaWikiBot mediaWikiBot;
+    private List<SimpleArticle> writtenArticles = new LinkedList<>();
     private static Logger LOGGER = Logger.getLogger(WikiWriterImpl.class);
 
     @Override
@@ -24,6 +26,7 @@ public class WikiWriterImpl implements WikiWriter {
         for (SimpleArticle article : articlesToWrite) {
             LOGGER.info("Writing article " + article.getTitle() + " to wiki...");
             mediaWikiBot.writeContent(article);
+            writtenArticles.add(article);
         }
     }
 
@@ -49,5 +52,17 @@ public class WikiWriterImpl implements WikiWriter {
         this.password = password;
     }
 
+    @Override
+    public MediaWikiBot getMediaWikiBot() {
+        return mediaWikiBot;
+    }
 
+    @Override
+    public void rollbackCreatedArticles() {
+        LOGGER.info("Performing rollback.");
+        for (SimpleArticle article : writtenArticles) {
+            mediaWikiBot.delete(article.getTitle(), "OWL2WIKI ROLLBACK");
+        }
+        writtenArticles = new LinkedList<>();
+    }
 }

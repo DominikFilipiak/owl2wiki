@@ -46,4 +46,7 @@ public interface WikiWriter {
      */
     public void setMediaWikiBot(MediaWikiBot mediaWikiBot);
 
+    MediaWikiBot getMediaWikiBot();
+
+    void rollbackCreatedArticles();
 }
