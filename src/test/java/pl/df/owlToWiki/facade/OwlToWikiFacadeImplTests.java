@@ -37,10 +37,10 @@ public class OwlToWikiFacadeImplTests {
     @Before
     public void setUp() throws Exception {
         owlLoader.setPredicates(predicates);
-//        inputFiles.add("/Users/dominikfilipiak/Downloads/DMOP/DMOP.owl");
-        inputFiles.add("ancestors.owl");
-//        owlLoader.setRootRDFType("http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#DM-Algorithm");
-        owlLoader.setRootRDFType("http://www.workingontologist.org/Examples/Chapter7/Ancestry.owl#Person");
+        inputFiles.add("/Users/dominikfilipiak/Downloads/DMOP/DMOP.owl");
+//        inputFiles.add("ancestors.owl");
+        owlLoader.setRootRDFType("http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#DM-Algorithm");
+//        owlLoader.setRootRDFType("http://www.workingontologist.org/Examples/Chapter7/Ancestry.owl#Person");
         owlLoader.setInputFiles(inputFiles);
 
     }

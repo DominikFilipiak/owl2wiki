@@ -10,7 +10,7 @@ import java.util.List;
  * Time: 12:55
  */
 public interface OwlLoader {
-    //    private OntModel loadFiles();
+
     public void setInputFiles(List<String> inputFiles);
 
     /**
@@ -23,4 +23,6 @@ public interface OwlLoader {
     void setRootRDFType(String rootRDFType);
 
     void setPredicates(List<String> predicates);
+
+    void setArticlesFactory(ArticlesFactory articlesFactory);
 }

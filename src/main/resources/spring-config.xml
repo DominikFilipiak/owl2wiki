@@ -19,6 +19,11 @@
         <property name="inputFiles" value="#{'${owl.files}'.split(',')}"/>
         <property name="rootRDFType" value="${owl.rootRDFType}"/>
         <property name="predicates" value="#{'${owl.predicates}'.split(',')}"/>
+        <property name="articlesFactory" ref="articlesFactory"/>
+    </bean>
+
+    <bean name="articlesFactory" class="pl.df.owlToWiki.facade.owl.ArticlesFactory">
+        <property name="rootRDFType" value="${owl.rootRDFType}"/>
     </bean>
 
     <!-- Wikipedia writer -->
