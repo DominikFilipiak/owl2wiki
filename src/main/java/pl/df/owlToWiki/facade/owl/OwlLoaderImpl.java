@@ -8,6 +8,8 @@ import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.apache.log4j.Logger;
+import pl.df.owlToWiki.facade.article.ArticleType;
+import pl.df.owlToWiki.facade.article.ArticlesFactory;
 
 import java.util.LinkedList;
 import java.util.List;

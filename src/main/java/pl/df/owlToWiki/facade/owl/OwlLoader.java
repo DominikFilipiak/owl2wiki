@@ -1,6 +1,7 @@
 package pl.df.owlToWiki.facade.owl;
 
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
+import pl.df.owlToWiki.facade.article.ArticlesFactory;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package pl.df.owlToWiki.facade.owl;
+package pl.df.owlToWiki.facade.article;
 
 /**
  * User: dominikfilipiak
@@ -6,5 +6,5 @@ package pl.df.owlToWiki.facade.owl;
  * Time: 21:45
  */
 public enum ArticleType {
-    ARTICLE, CATEGORY
+    ARTICLE, TEMPLATE, CATEGORY
 }

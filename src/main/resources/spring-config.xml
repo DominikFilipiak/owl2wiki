@@ -22,8 +22,23 @@
         <property name="articlesFactory" ref="articlesFactory"/>
     </bean>
 
-    <bean name="articlesFactory" class="pl.df.owlToWiki.facade.owl.ArticlesFactory">
+    <!-- Articles -->
+    <bean name="articlesFactory" class="pl.df.owlToWiki.facade.article.ArticlesFactory">
+        <property name="individualArticleBuilder" ref="individualArticleBuilder"/>
+        <property name="categoryArticleBuilder" ref="categoryArticleBuilder"/>
+        <property name="templateArticleBuilder" ref="templateArticleBuilder"/>
+    </bean>
+
+    <bean name="individualArticleBuilder" class="pl.df.owlToWiki.facade.article.IndividualArticleBuilder">
         <property name="rootRDFType" value="${owl.rootRDFType}"/>
+    </bean>
+
+    <bean name="categoryArticleBuilder" class="pl.df.owlToWiki.facade.article.CategoryArticleBuilder">
+        <property name="rootRDFType" value="${owl.rootRDFType}"/>
+    </bean>
+
+    <bean name="templateArticleBuilder" class="pl.df.owlToWiki.facade.article.TemplateArticleBuilder">
+    <property name="rootRDFType" value="${owl.rootRDFType}"/>
     </bean>
 
     <!-- Wikipedia writer -->
