@@ -16,7 +16,7 @@ import java.util.List;
  * Date: 17/03/2014
  * Time: 13:41
  */
-public class CategoryArticleBuilder extends ArticlesBuilder {
+public class CategoryArticleBuilder extends AbstractArticleBuilder {
 
     private Logger LOGGER = Logger.getLogger(CategoryArticleBuilder.class);
 
@@ -89,7 +89,9 @@ public class CategoryArticleBuilder extends ArticlesBuilder {
 //        while (resultSet.hasNext()) {
 //            article.addTextnl("[[Category:" + resultSet.next().get("?parent").asResource().getLocalName() + "]]");
 //        }
-        addCategoryFooter(article, resource, model);
+        if (!resource.toString().equals(rootRDFType)) {
+            addCategoryFooter(article, resource, model);
+        }
 //        model.getProperty(resource, definiotion);
 //        article.addTextnl();
 

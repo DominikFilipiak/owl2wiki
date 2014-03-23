@@ -10,9 +10,10 @@ import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
  * Date: 17/03/2014
  * Time: 13:40
  */
-public abstract class ArticlesBuilder {
+public abstract class AbstractArticleBuilder {
 
     protected String rootRDFType;
+    protected QueryExecution queryExecution;
 
     /**
      * Queries ontology model via SPARQL query
@@ -23,11 +24,10 @@ public abstract class ArticlesBuilder {
      */
     protected ResultSet queryModel(OntModel model, String queryString) {
         Query query = QueryFactory.create(queryString);
-        QueryExecution queryExe = QueryExecutionFactory.create(query, model);
-        return queryExe.execSelect();
+        queryExecution = QueryExecutionFactory.create(query, model);
+        return queryExecution.execSelect();
     }
 
-    // TODO: Wyciąga coś innego niż SPARQL (więcej). Problem ze zbyt wieloma kategoriami pozostaje.
     protected void addCategoryFooter(SimpleArticle article, RDFNode resource, OntModel model) {
         String queryString;
         ResultSet resultSet;
@@ -35,15 +35,23 @@ public abstract class ArticlesBuilder {
                 "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" +
                 "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
                 "select DISTINCT ?parent\n" +
-                "where{\n" +
                 "\n" +
-                "<" + resource + "> (owl:equivalentClass|(owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)|rdfs:subClassOf) ?parent.\n" +
-                "FILTER (isURI(?parent) && !isBLANK(?parent)).\n" +
+                "where{\n" +
+                "  {    \n" +
+                "    <" + resource + ">\n" +
+                "    (owl:equivalentClass|(owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)|rdfs:subClassOf)\n" +
+                "    ?parent . \n" +
+                "   \n" +
+                "  }\n" +
+                "   FILTER(!(?parent = <" + resource + ">)).\n" +
+                "   FILTER (isURI(?parent) && !isBLANK(?parent)).\n" +
                 "}";
         resultSet = queryModel(model, queryString);
         while (resultSet.hasNext()) {
-            article.addTextnl("[[Category:" + resultSet.next().get("?parent").asResource().getLocalName() + "]]");
+            final String localName = resultSet.next().get("?parent").asResource().getLocalName();
+            article.addTextnl("[[Category:" + localName + "]]");
         }
+        queryExecution.close();
     }
 
     public void setRootRDFType(String rootRDFType) {

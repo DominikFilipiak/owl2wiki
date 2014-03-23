@@ -11,7 +11,7 @@ import java.util.List;
  * Date: 17/03/2014
  * Time: 13:41
  */
-public class TemplateArticleBuilder extends ArticlesBuilder {
+public class TemplateArticleBuilder extends AbstractArticleBuilder {
 
     private Logger LOGGER = Logger.getLogger(TemplateArticleBuilder.class);
 

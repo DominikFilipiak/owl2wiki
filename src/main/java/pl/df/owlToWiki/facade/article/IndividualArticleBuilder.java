@@ -16,7 +16,7 @@ import java.util.List;
  * Date: 17/03/2014
  * Time: 13:41
  */
-public class IndividualArticleBuilder extends ArticlesBuilder {
+public class IndividualArticleBuilder extends AbstractArticleBuilder {
     private Logger LOGGER = Logger.getLogger(IndividualArticleBuilder.class);
 
     public List<SimpleArticle> getIndividualsArticles(OntModel model) {
