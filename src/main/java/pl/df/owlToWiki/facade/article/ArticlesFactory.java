@@ -2,7 +2,6 @@ package pl.df.owlToWiki.facade.article;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
@@ -13,23 +12,33 @@ import java.util.List;
  */
 public class ArticlesFactory {
 
-    private static Logger LOGGER = Logger.getLogger(ArticlesFactory.class);
     private CategoryArticleBuilder categoryArticleBuilder;
     private IndividualArticleBuilder individualArticleBuilder;
     private TemplateArticleBuilder templateArticleBuilder;
 
+    private OntModel ontModel;
     private OntModel model;
 
+    /**
+     * Builds all articles for given type
+     *
+     * @param type Type of articles
+     * @return List of articles
+     */
     public List<SimpleArticle> buildArticles(ArticleType type) {
         switch (type) {
             case ARTICLE:
-                return individualArticleBuilder.getIndividualsArticles(model);
+                return individualArticleBuilder.getIndividualsArticles(ontModel, model);
             case CATEGORY:
-                return categoryArticleBuilder.getCategoryArticles(model);
+                return categoryArticleBuilder.getCategoryArticles(ontModel);
             case TEMPLATE:
-                return templateArticleBuilder.getTemplateArticles(model);
+                return templateArticleBuilder.getTemplateArticles();
         }
         return null;
+    }
+
+    public void setOntModel(OntModel ontModel) {
+        this.ontModel = ontModel;
     }
 
     public void setModel(OntModel model) {

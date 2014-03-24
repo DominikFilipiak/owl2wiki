@@ -23,7 +23,5 @@ public interface OwlLoader {
 
     void setRootRDFType(String rootRDFType);
 
-    void setPredicates(List<String> predicates);
-
     void setArticlesFactory(ArticlesFactory articlesFactory);
 }

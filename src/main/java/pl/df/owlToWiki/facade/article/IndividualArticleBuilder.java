@@ -3,7 +3,6 @@ package pl.df.owlToWiki.facade.article;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.apache.log4j.Logger;
@@ -19,7 +18,8 @@ import java.util.List;
 public class IndividualArticleBuilder extends AbstractArticleBuilder {
     private Logger LOGGER = Logger.getLogger(IndividualArticleBuilder.class);
 
-    public List<SimpleArticle> getIndividualsArticles(OntModel model) {
+
+    public List<SimpleArticle> getIndividualsArticles(OntModel ontModel, OntModel model) {
         LOGGER.info("Searching for individuals...");
         List<SimpleArticle> articles = new LinkedList<>();
         String queryString = "PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" +
@@ -33,39 +33,65 @@ public class IndividualArticleBuilder extends AbstractArticleBuilder {
                 "FILTER (isURI(?individual) && !isBLANK(?individual)).\n" +
                 "}";
 
-        ResultSet resultSet = queryModel(model, queryString);
+        ResultSet resultSet = queryModel(ontModel, queryString);
 
         while (resultSet.hasNext()) {
             QuerySolution next = resultSet.next();
             RDFNode individual = next.get("?individual");
             if (individual != null) {
                 LOGGER.info(individual.toString());
-                SimpleArticle simpleArticle = prepareIndividualArticle(model, individual);
-                articles.add(simpleArticle);
+                try {
+                    SimpleArticle simpleArticle = prepareIndividualArticle(ontModel, model, individual);
+                    articles.add(simpleArticle);
+                } catch (ArticleBuilderException e) {
+                    LOGGER.warn(e.getMessage());
+                }
             }
         }
         return articles;
     }
 
-    private SimpleArticle prepareIndividualArticle(OntModel model, RDFNode individual) {
-        final String title = individual.asResource().getLocalName();
+    private SimpleArticle prepareIndividualArticle(OntModel ontModel, OntModel model, RDFNode resource) throws ArticleBuilderException {
         SimpleArticle article = new SimpleArticle();
+        final String title = resource.asResource().getLocalName();
         article.setTitle(title);
-        Property definition = model.getProperty("http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#definition");
-        String queryString =
-                "select ?definition\n" +
-                        "where{\n" +
-                        " <" + individual.toString() + "> <" + definition + "> ?definition\n" +
-                        "}";
-        ResultSet resultSet = queryModel(model, queryString);
-        if (resultSet.hasNext()) {
-            article.addTextnl(resultSet.next().get("?definition").toString());
+        return prepareArticle(ontModel, model, resource, article);
+    }
+
+    /**
+     * Adds category footer to article.
+     *
+     * @param article  Article to add footer to
+     * @param resource Current resource which article is based on
+     * @param model    OWL model ___WITHOUT___ the reasoner
+     */
+    protected void addCategoryFooter(SimpleArticle article, RDFNode resource, OntModel model) {
+        String queryString;
+        ResultSet resultSet;
+        queryString = "PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "select DISTINCT ?parent\n" +
+                "\n" +
+                "where{\n" +
+                "  {    \n" +
+                "    <" + resource + ">\n" +
+                "    (rdf:type)\n" +
+                "    ?parent . \n" +
+                "   \n" +
+                "  }\n" +
+                "   FILTER(!(?parent = <" + resource + ">)).\n" +
+                "   FILTER(!(?parent = owl:NamedIndividual)).\n" +
+                "   FILTER(!(?parent = owl:Individual)).\n" +
+                "   FILTER(!(?parent = owl:Thing)).\n" +
+                "   FILTER (isURI(?parent) && !isBLANK(?parent)).\n" +
+                "}";
+        resultSet = queryModel(model, queryString);
+        while (resultSet.hasNext()) {
+            final String localName = resultSet.next().get("?parent").asResource().getLocalName();
+            article.addTextnl("[[Category:" + localName + "]]");
         }
-
-        // TODO: bad query -> SET IT TO RDF NODE
-        addCategoryFooter(article, individual, model);
-        return article;
-
+        queryExecution.close();
     }
 
 

@@ -16,15 +16,14 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:spring-config.xml")
 public class OwlLoaderImplTests {
+    //    List<String> predicates = new LinkedList<>();
+    List<String> inputFiles = new LinkedList<>();
     @Autowired
     private OwlLoader owlLoader;
 
-    List<String> predicates = new LinkedList<>();
-    List<String> inputFiles = new LinkedList<>();
-
     @Before
-    public void setUp(){
-        owlLoader.setPredicates(predicates);
+    public void setUp() {
+//        owlLoader.setPredicates(predicates);
         inputFiles.add("ancestors.owl");
 //        inputFiles.add("/Users/dominikfilipiak/Downloads/DMOP/DMOP.owl");
         owlLoader.setInputFiles(inputFiles);

@@ -1,4 +1,4 @@
-{| class="wikitable"
+{| align=right class="wikitable"
 |+Algorithm
 |-
 ! scope="col"| Property
@@ -26,3 +26,4 @@
 |-
 | {{#arraymap:{{{Qualities|}}}|,|x|[[has-quality::x]]}}
 |}
+{{{definition}}}

@@ -2,8 +2,12 @@ package pl.df.owlToWiki.facade.article;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.*;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
+import pl.df.owlToWiki.facade.wiki.Template;
+
+import java.util.Map;
 
 /**
  * User: dominikfilipiak
@@ -14,11 +18,12 @@ public abstract class AbstractArticleBuilder {
 
     protected String rootRDFType;
     protected QueryExecution queryExecution;
+    protected Template template;
 
     /**
-     * Queries ontology model via SPARQL query
+     * Queries ontology ontModel via SPARQL query
      *
-     * @param model       Ontology model
+     * @param model       Ontology ontModel
      * @param queryString Query string
      * @return A result set
      */
@@ -28,34 +33,83 @@ public abstract class AbstractArticleBuilder {
         return queryExecution.execSelect();
     }
 
-    protected void addCategoryFooter(SimpleArticle article, RDFNode resource, OntModel model) {
-        String queryString;
-        ResultSet resultSet;
-        queryString = "PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" +
-                "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" +
-                "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-                "select DISTINCT ?parent\n" +
-                "\n" +
-                "where{\n" +
-                "  {    \n" +
-                "    <" + resource + ">\n" +
-                "    (owl:equivalentClass|(owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)|rdfs:subClassOf)\n" +
-                "    ?parent . \n" +
-                "   \n" +
-                "  }\n" +
-                "   FILTER(!(?parent = <" + resource + ">)).\n" +
-                "   FILTER (isURI(?parent) && !isBLANK(?parent)).\n" +
-                "}";
-        resultSet = queryModel(model, queryString);
-        while (resultSet.hasNext()) {
-            final String localName = resultSet.next().get("?parent").asResource().getLocalName();
-            article.addTextnl("[[Category:" + localName + "]]");
+    /**
+     * Article preparation for given resource and ontology.
+     *
+     * @param ontModel Ontology model with a reasoner
+     * @param resource Resource
+     * @param article  Article to prepare
+     * @return Prepared article
+     * @throws ArticleBuilderException
+     */
+    protected SimpleArticle prepareArticle(OntModel ontModel, RDFNode resource, SimpleArticle article) throws ArticleBuilderException {
+        if (article.getTitle().isEmpty()) throw new ArticleBuilderException("Cannot create article with empty title");
+        appendTemplateValues(article, ontModel, resource);
+        if (!resource.toString().equals(rootRDFType)) {
+            addCategoryFooter(article, resource, ontModel);
         }
-        queryExecution.close();
+        return article;
+    }
+
+    /**
+     * Article preparation for given resource and ontology.
+     *
+     * @param ontModel Ontology model with a reasoner
+     * @param model    Ontology model without a reasoner (for hierarchy sake)
+     * @param resource Resource
+     * @param article  Article to prepare
+     * @return Prepared article
+     * @throws ArticleBuilderException
+     */
+    protected SimpleArticle prepareArticle(OntModel ontModel, OntModel model, RDFNode resource, SimpleArticle article) throws ArticleBuilderException {
+        if (article.getTitle().isEmpty()) throw new ArticleBuilderException("Cannot create article with empty title");
+        appendTemplateValues(article, ontModel, resource);
+        if (!resource.toString().equals(rootRDFType)) {
+            addCategoryFooter(article, resource, model);
+        }
+        return article;
+    }
+
+    /**
+     * Fills up the article with values corresponding to given template
+     *
+     * @param article  Article to prepare
+     * @param model    Ontology model without a reasoner (for hierarchy sake)
+     * @param resource Resource
+     */
+    protected void appendTemplateValues(SimpleArticle article, OntModel model, RDFNode resource) {
+        article.addTextnl("{{Template:" + template.getTitle());
+        for (Map.Entry<String, String> entry : template.getTemplateVariables().entrySet()) {
+            Property property = model.getProperty(entry.getValue());
+            String queryString =
+                    "select ?property\n" +
+                            "where{\n" +
+                            " <" + resource.toString() + "> <" + property + "> ?property\n" +
+                            "}";
+            ResultSet resultSet = queryModel(model, queryString);
+            if (resultSet.hasNext()) {
+                RDFNode node = resultSet.next().get("?property");
+                String text = node.isResource() ? "[[" + node.asResource().getLocalName() + "]]" : node.toString();
+                article.addTextnl("| " + entry.getKey() + "=" + text);
+            }
+        }
+        article.addTextnl("}}");
+    }
+
+    // pure abstraction
+    protected void addCategoryFooter(SimpleArticle article, RDFNode resource, OntModel model) {
+        try {
+            throw new Exception("Implementation not found!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setRootRDFType(String rootRDFType) {
         this.rootRDFType = rootRDFType;
     }
 
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
 }

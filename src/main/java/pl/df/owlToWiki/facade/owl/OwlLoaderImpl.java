@@ -3,6 +3,7 @@ package pl.df.owlToWiki.facade.owl;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.reasoner.Reasoner;
 import com.hp.hpl.jena.reasoner.ReasonerRegistry;
@@ -21,21 +22,24 @@ import java.util.List;
  */
 public class OwlLoaderImpl implements OwlLoader {
 
+    private static Logger LOGGER = Logger.getLogger(OwlLoaderImpl.class);
     private ArticlesFactory articlesFactory;
     private List<String> inputFiles;
     private String rootRDFType;
-    private List<String> predicates;
-    private static Logger LOGGER = Logger.getLogger(OwlLoaderImpl.class);
-
 
     @Override
     public List<SimpleArticle> getArticlesToWrite() throws OntLoaderException {
-        OntModel model = loadFilesAsOntologyModel();
-        checkRootClass(model);
+        OntModel model = loadFilesAsModel();
+        OntModel ontModel = loadFilesAsOntologyModel();
+        checkRootClass(ontModel);
         articlesFactory.setModel(model);
+        articlesFactory.setOntModel(ontModel);
+        List<SimpleArticle> articles = new LinkedList<>();
+        // You might be surprised but it's great deal faster than forEach (in alphabetical order). Don't know why, yet.
+        List<SimpleArticle> templateArticles = articlesFactory.buildArticles(ArticleType.TEMPLATE);
         List<SimpleArticle> categoryArticles = articlesFactory.buildArticles(ArticleType.CATEGORY);
         List<SimpleArticle> individualsArticles = articlesFactory.buildArticles(ArticleType.ARTICLE);
-        List<SimpleArticle> articles = new LinkedList<>();
+        articles.addAll(templateArticles);
         articles.addAll(categoryArticles);
         articles.addAll(individualsArticles);
         return articles;
@@ -55,16 +59,13 @@ public class OwlLoaderImpl implements OwlLoader {
     }
 
     /**
-     * Loads all files from properties
+     * Loads all files from properties as a model with a reasoner
      *
      * @return Ontology model
      */
     private OntModel loadFilesAsOntologyModel() {
         OntModel ontModel = ModelFactory.createOntologyModel();
-        for (String filePath : inputFiles) {
-            LOGGER.info("Attempting to read " + filePath);
-            loadFile(filePath, ontModel);
-        }
+        loadFilesToModel(ontModel);
         LOGGER.debug("Done with loading files.");
         LOGGER.debug("Setting up the reasoner.");
         Reasoner reasoner = ReasonerRegistry.getTransitiveReasoner();
@@ -78,12 +79,32 @@ public class OwlLoaderImpl implements OwlLoader {
     }
 
     /**
+     * Loads all files from properties as a model without a reasoner
+     *
+     * @return Ontology model
+     */
+    private OntModel loadFilesAsModel() {
+        OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+        loadFilesToModel(model);
+        LOGGER.debug("Done with loading files.");
+        LOGGER.debug("Model created.");
+        return model;
+    }
+
+    private void loadFilesToModel(Model model) {
+        for (String filePath : inputFiles) {
+            LOGGER.info("Attempting to read " + filePath);
+            loadFile(filePath, model);
+        }
+    }
+
+    /**
      * Loads single file
      *
      * @param filePath Absolute path to file
      * @param ontology Ontology to append mentioned file to
      */
-    private void loadFile(String filePath, OntModel ontology) {
+    private void loadFile(String filePath, Model ontology) {
         ontology.read(filePath);
     }
 
@@ -95,11 +116,6 @@ public class OwlLoaderImpl implements OwlLoader {
     @Override
     public void setRootRDFType(String rootRDFType) {
         this.rootRDFType = rootRDFType;
-    }
-
-    @Override
-    public void setPredicates(List<String> predicates) {
-        this.predicates = predicates;
     }
 
     @Override

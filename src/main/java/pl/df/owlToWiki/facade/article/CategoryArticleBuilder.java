@@ -3,7 +3,6 @@ package pl.df.owlToWiki.facade.article;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.apache.log4j.Logger;
@@ -36,22 +35,23 @@ public class CategoryArticleBuilder extends AbstractArticleBuilder {
                 "  ?subclass ((owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)|rdfs:subClassOf)+ <" + rootRDFType + ">.\n" +
                 " } UNION {\n" +
                 " }\n" +
-                "}";          // TODO: sprawdzić, czy potrzebne będzie samo equivalentclass
-
+                "}";
         ResultSet resultSet = queryModel(model, queryString);
-
         while (resultSet.hasNext()) {
             QuerySolution next = resultSet.next();
             RDFNode categoryClass = next.get("?subclass");
             if (categoryClass != null) {
                 LOGGER.info(categoryClass.toString());
-                SimpleArticle simpleArticle = prepareCategoryArticle(model, categoryClass);
-                articles.add(simpleArticle);
+                try {
+                    SimpleArticle simpleArticle = prepareCategoryArticle(model, categoryClass);
+                    articles.add(simpleArticle);
+                } catch (ArticleBuilderException e) {
+                    LOGGER.error(e.getMessage());
+                }
             }
         }
         return articles;
     }
-
 
     /**
      * Prepares single category article
@@ -60,47 +60,37 @@ public class CategoryArticleBuilder extends AbstractArticleBuilder {
      * @param resource Statement
      * @return Article
      */
-    private SimpleArticle prepareCategoryArticle(OntModel model, RDFNode resource) {
-        final String title = resource.asResource().getLocalName();
+    private SimpleArticle prepareCategoryArticle(OntModel model, RDFNode resource) throws ArticleBuilderException {
         SimpleArticle article = new SimpleArticle();
+        final String title = resource.asResource().getLocalName();
         article.setTitle("Category:" + title);
-        Property definition = model.getProperty("http://www.e-lico.eu/ontologies/dmo/DMOP/DMOP.owl#definition");
-        String queryString =
-                "select ?definition\n" +
-                        "where{\n" +
-                        " <" + resource.toString() + "> <" + definition + "> ?definition\n" +
-                        "}";
-        ResultSet resultSet = queryModel(model, queryString);
-        if (resultSet.hasNext()) {
-            article.addTextnl(resultSet.next().get("?definition").toString());
-        }
-
-        // TODO: bad query -> SET IT TO RDF NODE
-//        queryString = "PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" +
-//                "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" +
-//                "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
-//                "select DISTINCT ?parent\n" +
-//                "where{\n" +
-//                "\n" +
-//                "<" + resource + "> (owl:equivalentClass|(owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)|rdfs:subClassOf) ?parent.\n" +
-//                "FILTER (isURI(?parent) && !isBLANK(?parent)).\n" +
-//                "}";
-//        resultSet = queryModel(model, queryString);
-//        while (resultSet.hasNext()) {
-//            article.addTextnl("[[Category:" + resultSet.next().get("?parent").asResource().getLocalName() + "]]");
-//        }
-        if (!resource.toString().equals(rootRDFType)) {
-            addCategoryFooter(article, resource, model);
-        }
-//        model.getProperty(resource, definiotion);
-//        article.addTextnl();
-
-//        for (String predicate : predicates) {
-        // TODO:
-//            final Property property = model.getProperty(predicate);
-//            final RDFNode propertyResourceValue = resource.getPropertyValue(property);
-//            article.addText(propertyResourceValue.asLiteral().getString());
-//        }
-        return article;
+        return prepareArticle(model, resource, article);
     }
+
+    protected void addCategoryFooter(SimpleArticle article, RDFNode resource, OntModel model) {
+        String queryString;
+        ResultSet resultSet;
+        queryString = "PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "select DISTINCT ?parent\n" +
+                "\n" +
+                "where{\n" +
+                "  {    \n" +
+                "    <" + resource + ">\n" +
+                "    (owl:equivalentClass|(owl:equivalentClass/owl:intersectionOf/rdf:rest*/rdf:first)|rdfs:subClassOf)\n" +
+                "    ?parent . \n" +
+                "   \n" +
+                "  }\n" +
+                "   FILTER(!(?parent = <" + resource + ">)).\n" +
+                "   FILTER (isURI(?parent) && !isBLANK(?parent)).\n" +
+                "}";
+        resultSet = queryModel(model, queryString);
+        while (resultSet.hasNext()) {
+            final String localName = resultSet.next().get("?parent").asResource().getLocalName();
+            article.addTextnl("[[Category:" + localName + "]]");
+        }
+        queryExecution.close();
+    }
+
 }
