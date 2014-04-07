@@ -5,8 +5,11 @@ import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
+import org.apache.commons.lang.StringUtils;
 import pl.df.owlToWiki.facade.wiki.Template;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -87,11 +90,14 @@ public abstract class AbstractArticleBuilder {
                             " <" + resource.toString() + "> <" + property + "> ?property\n" +
                             "}";
             ResultSet resultSet = queryModel(model, queryString);
-            if (resultSet.hasNext()) {
+            List<String> templateValues = new ArrayList<>();
+            while (resultSet.hasNext()) {
                 RDFNode node = resultSet.next().get("?property");
-                String text = node.isResource() ? "[[" + node.asResource().getLocalName() + "]]" : node.toString();
-                article.addTextnl("| " + entry.getKey() + "=" + text);
+                String text = node.isResource() ? node.asResource().getLocalName() : node.toString();
+                templateValues.add(text);
             }
+            String concatenatedValues = StringUtils.join(templateValues, ", ");
+            article.addTextnl("| " + entry.getKey() + "=" + concatenatedValues);
         }
         article.addTextnl("}}");
     }

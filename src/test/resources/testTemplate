@@ -1,0 +1,30 @@
+{| align=right class="wikitable"
+|+Algorithm
+|-
+! scope="col"| Property
+! scope="col"| Value
+|-
+
+| Name
+| {{{uri}}}
+|-
+
+| specifiesInputClass
+| {{{specifiesInputClass}}}
+|-
+
+| specifiesOutputClass
+| {{{specifiesOutputClass}}}
+|-
+
+| assumes
+| {{{assumes}}}
+|-
+
+| hasOptimizationProblem
+| {{{hasOptimizationProblem}}}
+|-
+| has-quality
+| {{#arraymap:{{{Qualities|}}}|,|x|[[has-quality::x]]}}
+|}
+{{{definition}}}
