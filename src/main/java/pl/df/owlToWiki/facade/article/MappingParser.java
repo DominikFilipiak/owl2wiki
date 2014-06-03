@@ -1,4 +1,4 @@
-package pl.df.owlToWiki.facade.wiki;
+package pl.df.owlToWiki.facade.article;
 
 import java.io.IOException;
 import java.util.Map;

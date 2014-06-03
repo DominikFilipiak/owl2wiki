@@ -1,4 +1,4 @@
-package pl.df.owlToWiki.facade.wiki;
+package pl.df.owlToWiki.facade.article;
 
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.apache.log4j.Logger;

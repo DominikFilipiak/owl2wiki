@@ -88,7 +88,9 @@ public class CategoryArticleBuilder extends AbstractArticleBuilder {
         resultSet = queryModel(model, queryString);
         while (resultSet.hasNext()) {
             final String localName = resultSet.next().get("?parent").asResource().getLocalName();
-            article.addTextnl("[[Category:" + localName + "]]");
+            if (!localName.equals("Resource")) {
+                article.addTextnl("[[Category:" + localName + "]]");
+            }
         }
         queryExecution.close();
     }

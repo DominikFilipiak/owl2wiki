@@ -6,7 +6,6 @@ import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import net.sourceforge.jwbf.core.contentRep.SimpleArticle;
 import org.apache.commons.lang.StringUtils;
-import pl.df.owlToWiki.facade.wiki.Template;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +104,7 @@ public abstract class AbstractArticleBuilder {
     // pure abstraction
     protected void addCategoryFooter(SimpleArticle article, RDFNode resource, OntModel model) {
         try {
-            throw new Exception("Implementation not found!");
+            throw new Exception("Implementation not found! Please implement your own one");
         } catch (Exception e) {
             e.printStackTrace();
         }

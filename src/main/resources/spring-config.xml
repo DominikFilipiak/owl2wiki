@@ -6,7 +6,8 @@
     <context:annotation-config/>
     <context:component-scan base-package="pl.df.owlToWiki"/>
 
-    <context:property-placeholder location="classpath*:application.properties"/>
+    <!--<context:property-placeholder location="classpath*:application.properties"/>-->
+    <context:property-placeholder location="${config}"/>
 
     <!-- Main facade -->
     <bean name="owlToWikiFacade" class="pl.df.owlToWiki.facade.OwlToWikiFacadeImpl">
@@ -42,15 +43,15 @@
 
     <!-- Template -->
 
-    <bean name="template" class="pl.df.owlToWiki.facade.wiki.Template" init-method="parse">
+    <bean name="template" class="pl.df.owlToWiki.facade.article.Template" init-method="parse">
         <property name="parser" ref="mappingParser"/>
         <property name="pathToTemplate"
-                  value="/Users/dominikfilipiak/IdeaProjects/owlToWiki/src/main/resources/template"/>
+                  value="${path.template}"/>
         <property name="pathToMapping"
-                  value="/Users/dominikfilipiak/IdeaProjects/owlToWiki/src/main/resources/mapping.properties"/>
+                  value="${path.mapping}"/>
     </bean>
 
-    <bean name="mappingParser" class="pl.df.owlToWiki.facade.wiki.MappingParserImpl"/>
+    <bean name="mappingParser" class="pl.df.owlToWiki.facade.article.MappingParserImpl"/>
 
     <!-- Wikipedia writer -->
     <bean name="wikiWriter" class="pl.df.owlToWiki.facade.wiki.WikiWriterImpl">
