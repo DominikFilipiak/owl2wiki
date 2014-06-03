@@ -67,14 +67,14 @@
     </dependencies>
 
     <build>
-        <finalName>OWL to Wiki</finalName>
+        <finalName>owl2wiki</finalName>
         <testOutputDirectory>target/test-classes</testOutputDirectory>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <!--<scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>-->
         <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
         <resources>
             <resource>
-                <directory>${project.basedir}/src/main/resources/*</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
             </resource>
         </resources>
         <testResources>
@@ -153,7 +153,7 @@
                                 <resource>
                                     <directory>src/main/resources</directory>
                                     <includes>
-                                        <include>**/*.properties</include>
+                                        <include>**/*</include>
                                     </includes>
                                 </resource>
                             </resources>
