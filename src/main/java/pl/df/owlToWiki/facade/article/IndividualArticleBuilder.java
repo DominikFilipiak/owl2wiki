@@ -35,18 +35,25 @@ public class IndividualArticleBuilder extends AbstractArticleBuilder {
 
         ResultSet resultSet = queryModel(ontModel, queryString);
 
-        while (resultSet.hasNext()) {
-            QuerySolution next = resultSet.next();
-            RDFNode individual = next.get("?individual");
-            if (individual != null) {
-                LOGGER.info(individual.toString());
-                try {
-                    SimpleArticle simpleArticle = prepareIndividualArticle(ontModel, model, individual);
-                    articles.add(simpleArticle);
-                } catch (ArticleBuilderException e) {
-                    LOGGER.warn(e.getMessage());
+        resultSet.getRowNumber();
+        try {
+            while (resultSet.hasNext()) {
+                QuerySolution next = resultSet.next();
+                RDFNode individual = next.get("?individual");
+                if (individual != null) {
+                    LOGGER.info(individual.toString());
+                    try {
+                        SimpleArticle simpleArticle = prepareIndividualArticle(ontModel, model, individual);
+                        articles.add(simpleArticle);
+                    } catch (ArticleBuilderException e) {
+                        LOGGER.warn(e.getMessage());
+                    }
                 }
             }
+        } catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            LOGGER.info(e.getStackTrace());
+            LOGGER.info(e.getCause());
         }
         return articles;
     }
