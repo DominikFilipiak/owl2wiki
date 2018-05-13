@@ -14,7 +14,9 @@ mvn clean package -DskipTests=true
 Apparently I commited some failing tests, we need to skip that. 🌧
 
 ## Example
-Set up your Semantic Media Wiki. Download [the DMOP ontology](http://www.dmo-foundry.org/DMOP). Then go to the *target* folder, and then to *conf* - you need to change your configuration files. There are three: application.properties, mapping.properties, and template.
+Set up your Semantic Media Wiki. Download [the DMOP ontology](http://www.dmo-foundry.org/DMOP), which classifies data mining algorithms. Here's the *DMKB.owl*, we're interested in pushing all algorithms to the SemanticMediaWiki instance:
+![DMOP](https://i.imgur.com/jHRsC1T.png)
+Go to the *target* folder, and then to *conf* - you need to change your configuration files. There are three: application.properties, mapping.properties, and template.
 1) General properties (*application.properties*) - paths to other files and SMW-related settings. For the DMOP example, you have to change *wiki.password*, *wiki.userName*, *wiki.url*, and *owl.files* according to your setup.
 ```INI
 path.template=./conf/template	 # path to your template - there's an example for DMOP
@@ -70,4 +72,6 @@ With all that set, simply run:
 ```bash
 java -Dconfig=file:conf/application.properties -Xmx1024M -jar owl2wiki-jar-with-dependencies.jar
 ```
-...and that's all. Adjust *-Xmx* if you're out of RAM.
+...and that's all. Adjust *-Xmx* if you're out of RAM. Below some generated examples:
+![DM-Algorithm](https://i.imgur.com/oSc9mL4.png)
+![C4.5](https://i.imgur.com/IyxadVs.png)
