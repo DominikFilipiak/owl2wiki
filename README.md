@@ -14,9 +14,11 @@ mvn clean package -DskipTests=true
 Apparently I commited some failing tests, we need to skip that. 🌧
 
 ## Example
-Set up your Semantic Media Wiki. Download [the DMOP ontology](http://www.dmo-foundry.org/DMOP), which classifies data mining algorithms. Here's the *DMKB.owl*, we're interested in pushing all algorithms to the SemanticMediaWiki instance:
+Set up your Semantic Media Wiki. Download [the DMOP ontology](http://www.dmo-foundry.org/DMOP), which classifies data mining algorithms. Here's the *DMKB.owl* (viewed in Protege), we're interested in pushing all algorithms to the SemanticMediaWiki instance in this example.
 ![DMOP](https://i.imgur.com/jHRsC1T.png)
-Go to the *target* folder, and then to *conf* - you need to change your configuration files. There are three: application.properties, mapping.properties, and template.
+
+
+Now go to the *target* folder, and then to *conf* - you need to change your configuration files. There are three: application.properties, mapping.properties, and template.
 1) General properties (*application.properties*) - paths to other files and SMW-related settings. For the DMOP example, you have to change *wiki.password*, *wiki.userName*, *wiki.url*, and *owl.files* according to your setup.
 ```INI
 path.template=./conf/template	 # path to your template - there's an example for DMOP
