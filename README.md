@@ -11,7 +11,7 @@ To build the package, run the command below:
 ```bash
 mvn clean package -DskipTests=true
 ```
-Apparently I commited some failing tests, we need to skip that. 🌧
+Apparently I commited some failing tests 🌧, we need to skip that (see [Issue #1](https://github.com/0xDFDFDF/owl2wiki/issues/1)). Will try to fix it in my spare time.
 
 ## Example
 Set up your Semantic Media Wiki. Download [the DMOP ontology](http://www.dmo-foundry.org/DMOP), which classifies data mining algorithms. Here's the *DMKB.owl* (viewed in Protege), we're interested in pushing all algorithms to the SemanticMediaWiki instance in this example.
